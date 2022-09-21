@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('main').appendChild(div);
   }
 
+  for (let j = 0; j < 10; j++) {
+    const div = document.createElement('div');
+    document.getElementById('main').appendChild(div).classList.add('taken');
+
+  }
+
   let squares = Array.from(document.querySelectorAll('.grid div'))
 
   //The Tetrominoes
@@ -69,6 +75,29 @@ document.addEventListener('DOMContentLoaded', () => {
     current.forEach(index => {
       squares[currentPosition + index].classList.remove('tetromino')
     })
+  }
+
+  //make the tetrominoes move down every second
+  timerId = setInterval(moveDown, 1000)
+
+  //move down function
+  function moveDown() {
+    undraw()
+    currentPosition += width
+    draw()
+    freeze()
+  }
+
+  //freeze function
+  function freeze() {
+    if(current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
+      current.forEach(index => squares[currentPosition + index].classList.add('taken'))
+      //start a new tetromino falling
+      random = Math.floor(Math.random() * theTetrominoes.length)
+      current = theTetrominoes[random][currentRotation]
+      currentPosition = 4
+      draw()
+    }
   }
 
 

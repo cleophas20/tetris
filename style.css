@@ -15,3 +15,7 @@
 .tetromino {
   background-color: blue;
 }
+
+.taken {
+  background-color: green;
+}
