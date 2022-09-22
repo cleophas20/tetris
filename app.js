@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const scoreDisplay = document.querySelector('#score')
   const startBtn = document.querySelector('#start-button')
   const width = 10
+  let nextRandom = 0
 
 
   for (let i = 0; i < 200; i++) {
@@ -13,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   for (let j = 0; j < 10; j++) {
     const div = document.createElement('div');
     document.getElementById('main').appendChild(div).classList.add('taken');
+  }
 
+  for (let k = 0; k < 16; k++) {
+    const div = document.createElement('div');
+    document.getElementById('next').appendChild(div);
   }
 
   let squares = Array.from(document.querySelectorAll('.grid div'))
@@ -85,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(e.keyCode === 37) {
       moveLeft()
     } else if (e.keyCode === 38) {
-      //rotate
+      rotate()
     } else if (e.keyCode === 39) {
       moveRight()
     } else if (e.keyCode === 40) {
@@ -108,10 +113,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
       current.forEach(index => squares[currentPosition + index].classList.add('taken'))
       //start a new tetromino falling
-      random = Math.floor(Math.random() * theTetrominoes.length)
+      random = nextRandom
+      nextRandom = Math.floor(Math.random() * theTetrominoes.length)
       current = theTetrominoes[random][currentRotation]
       currentPosition = 4
       draw()
+      displayShape()
     }
   }
 
@@ -138,6 +145,42 @@ document.addEventListener('DOMContentLoaded', () => {
       currentPosition -=1
     }
     draw()
+  }
+
+  //rotate tetromino
+  function rotate() {
+    undraw()
+    currentRotation ++
+    if(currentRotation === current.length) {
+      currentRotation = 0
+    }
+    current = theTetrominoes[random][currentRotation]
+    draw()
+  }
+
+  //show up-next tetromino in minigrid
+  const displaySquares = document.querySelectorAll('.minigrid div')
+  const displayWidth = 4
+  let displayIndex = 0
+
+
+  //the Tetrominoes without rotations
+  const upNextTetrominoes = [
+    [1, displayWidth + 1, displayWidth * 2 + 1, 2], //lTetromino
+    [0, displayWidth, displayWidth + 1, displayWidth *2 + 1], //zTetromino
+    [1, displayWidth, displayWidth + 1, displayWidth + 2], //tTetromino
+    [0, 1, displayWidth, displayWidth + 1], //oTetromino
+    [1, displayWidth + 1, displayWidth * 2 + 1, displayWidth * 3 + 1] //iTetromino
+  ]
+
+  //display the shame in the minigrid
+  function displayShape() {
+    displaySquares.forEach(square => {
+      square.classList.remove('tetromino')
+    })
+    upNextTetrominoes[nextRandom].forEach( index => {
+      displaySquares[displayIndex + index].classList.add('tetromino')
+    })
   }
 
 
